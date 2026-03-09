@@ -10,18 +10,8 @@ connectDB();
 
 // 2. CORS Configuration
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(null, true); // Allow all for development
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    optionsSuccessStatus: 200
+    origin: 'https://wa-order.vercel.app', // Jo URL tumhare screenshot mein dikh raha hai
+    credentials: true
 }));
 
 app.use(express.json());
