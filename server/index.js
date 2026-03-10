@@ -10,10 +10,14 @@ connectDB();
 
 // 2. CORS Configuration
 app.use(cors({
-    // Ab ye Environment variable se URL uthayega
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', 
-    credentials: true
+    origin: 'https://wa-order.vercel.app', // Bilkul yahi URL hona chahiye
+    credentials: true, // Sabse zaroori line
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Pre-flight requests ko handle karne ke liye ye zaroor daalein
+app.options('*', cors());
 
 app.use(express.json());
 
