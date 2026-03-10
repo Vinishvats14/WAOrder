@@ -10,7 +10,8 @@ connectDB();
 
 // 2. CORS Configuration
 app.use(cors({
-    origin: 'https://wa-order.vercel.app', // Jo URL tumhare screenshot mein dikh raha hai
+    // Ab ye Environment variable se URL uthayega
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173', 
     credentials: true
 }));
 
