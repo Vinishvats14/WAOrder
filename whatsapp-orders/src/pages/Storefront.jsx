@@ -17,7 +17,7 @@ export default function Storefront() {
 
     // 1. APNA REAL NUMBER DALO (Bina + aur bina space ke)
     // Example: "919876543210"
-    const myWhatsAppNumber = "8700369451"; 
+    const myWhatsAppNumber = "+91 8700369451"; 
 
     const orderData = {
         customerName: customer.name,
