@@ -1,0 +1,5 @@
+.env
+.nodemoudules
+dist
+dist-ssr
+*.local             
