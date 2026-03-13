@@ -6,7 +6,29 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.addProduct = async (req, res) => {
-    const newProduct = new Product(req.body);
-    await newProduct.save();
-    res.json(newProduct);
+    try {
+        const { name, price, description, sellerId, stock, minStock } = req.body;
+        console.log("Backend Received:", { stock, minStock });
+        
+        // Properly parse stock and minStock
+        const parsedStock = stock && stock !== '' ? Number(stock) : 10;
+        const parsedMinStock = minStock && minStock !== '' ? Number(minStock) : 3;
+        
+        console.log("Parsed Values:", { parsedStock, parsedMinStock });
+        
+        const newProduct = new Product({
+            name,
+            price,
+            description,
+            sellerId,
+            stock: parsedStock,
+            minStock: parsedMinStock,
+            image: req.file ? req.file.path : ''
+        });
+
+        await newProduct.save();
+        res.status(201).json(newProduct);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };

@@ -1,12 +1,32 @@
 const Order = require('../models/Order');
+const Product = require('../models/Product'); // Product model import karna mat bhulna
 
 exports.createOrder = async (req, res) => {
     try {
-        const newOrder = new Order(req.body);
-        const savedOrder = await newOrder.save();
-        res.status(201).json(savedOrder);
+        const { customerName, customerPhone, address, items, total, sellerId } = req.body;
+
+        const newOrder = new Order({
+            customerName,
+            customerPhone,
+            address,
+            items,
+            total,
+            sellerId
+        });
+
+        await newOrder.save();
+
+        // 🔥 YAHAN SE STOCK MINUS HOGA:
+        // Har item jo order hua hai, uska stock database mein kam karo
+        for (const item of items) {
+            await Product.findByIdAndUpdate(item._id, {
+                $inc: { stock: -1 } // $inc se value 1 kam ho jayegi
+            });
+        }
+
+        res.status(201).json(newOrder);
     } catch (err) {
-        res.status(400).json({ msg: "Order save nahi hua" });
+        res.status(500).json({ error: err.message });
     }
 };
 

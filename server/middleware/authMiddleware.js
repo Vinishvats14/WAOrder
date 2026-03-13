@@ -9,6 +9,7 @@ module.exports = (req, res, next) => {
         req.adminId = decoded.id;
         next();
     } catch (err) {
+        console.log("JWT Error:", err.message);
         res.status(401).json({ msg: 'Token is not valid' });
     }
 };
