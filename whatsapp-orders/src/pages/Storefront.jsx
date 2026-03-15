@@ -38,10 +38,17 @@ export default function Storefront() {
     useEffect(() => {
         const fetchStoreData = async () => {
             try {
+                // Validate shopName exists and is not empty
+                if (!shopName || shopName.length === 0) {
+                    setError("Invalid shop name");
+                    setLoading(false);
+                    return;
+                }
+
                 console.log("Fetching store data for shopName:", shopName);
                 // 1. Fetch Store/Seller Details by Slug
                 const sellerRes = await axiosInstance.get(`/auth/store/${shopName}`);
-                console.log("Full Seller Data from API:", sellerRes.data); // <--- ISSE CHECK KARO
+                console.log("Full Seller Data from API:", sellerRes.data);
                 setSeller(sellerRes.data);
 
                 // 2. Fetch Products for this specific Seller

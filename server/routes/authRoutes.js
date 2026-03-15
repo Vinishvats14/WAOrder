@@ -9,7 +9,11 @@ router.post('/register', async (req, res) => {
     try {
         const { email, password, storeName, whatsappNumber } = req.body;
 
-        const existingStore = await User.findOne({ storeName });
+        // Process storeName first
+        const processedStoreName = storeName.toLowerCase().replace(/\s+/g, '-');
+        
+        // Check if processed storeName already exists
+        const existingStore = await User.findOne({ storeName: processedStoreName });
         if (existingStore) return res.status(400).json({ msg: "Store name already taken!" });
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,7 +21,7 @@ router.post('/register', async (req, res) => {
         const newUser = new User({
             email,
             password: hashedPassword,
-            storeName: storeName.toLowerCase().replace(/\s+/g, '-'),
+            storeName: processedStoreName,
             whatsappNumber
         });
 

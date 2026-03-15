@@ -248,7 +248,9 @@ export default function AdminDashboard() {
 
     // Ye line spaces ko '-' mein badal degi aur sab small letters kar degi
     const rawStoreName = localStorage.getItem('storeName') || "";
-    const shopName = rawStoreName.trim().replace(/\s+/g, '-').toLowerCase();
+    const shopName = rawStoreName && rawStoreName.length > 0 
+        ? rawStoreName.trim().toLowerCase()
+        : null;
     console.log("Store Debug:", { rawStoreName, shopName });
 
     const lowStockProducts = products.filter(p => p.stock <= (p.minStock || 3));
@@ -262,15 +264,21 @@ export default function AdminDashboard() {
                         Orders & Stock 📦
                     </Link>
 
-                    {/* 2. LIVE STORE BUTTON (Tera naya rasta) */}
-                    <a
-                        href={`/${shopName}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-6 py-3 bg-green-100 text-green-700 rounded-2xl font-bold text-sm hover:bg-green-200 transition flex items-center gap-2 border border-green-200"
-                    >
-                        View Live Store 🌐
-                    </a>
+                    {/* 2. LIVE STORE BUTTON - Only show if shopName exists */}
+                    {shopName ? (
+                        <a
+                            href={`/${shopName}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-6 py-3 bg-green-100 text-green-700 rounded-2xl font-bold text-sm hover:bg-green-200 transition flex items-center gap-2 border border-green-200"
+                        >
+                            View Live Store 🌐
+                        </a>
+                    ) : (
+                        <button disabled className="px-6 py-3 bg-gray-200 text-gray-400 rounded-2xl font-bold text-sm cursor-not-allowed">
+                            Loading Store... ⏳
+                        </button>
+                    )}
 
                     {/* 3. Settings Link */}
                     <Link to="/admin/settings" className="px-6 py-3 bg-gray-100 text-gray-600 rounded-2xl font-bold text-sm hover:bg-gray-200 transition">
