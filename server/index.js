@@ -61,6 +61,11 @@ app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
 
+
+// server.js mein sabse niche routes ke pass
+app.get('/', (req, res) => {
+    res.send('WA-Order Backend is Running Smoothly... 🚀');
+});
 // 4. Final Port Fix for Render
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, '0.0.0.0', () => {
