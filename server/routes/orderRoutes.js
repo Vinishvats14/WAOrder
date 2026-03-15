@@ -24,9 +24,17 @@ router.get('/seller/:sellerId', auth, async (req, res) => {
     }
 });
 
-// 3. Status Update (Auth Needed)
+// 3. Status Update (Auth Needed) - WITH SELLER VERIFICATION
 router.patch('/:id/status', auth, async (req, res) => {
     try {
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json({ msg: "Order nahi mila" });
+        
+        // CRITICAL: Check if THIS seller owns THIS order
+        if (order.sellerId.toString() !== req.adminId) {
+            return res.status(403).json({ msg: "Unauthorized - Ye order aapka nahi hai!" });
+        }
+        
         const updatedOrder = await Order.findByIdAndUpdate(
             req.params.id, 
             { status: req.body.status }, 

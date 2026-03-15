@@ -15,6 +15,15 @@ const socket = io(socketURL, {
     withCredentials: true,
 });
 
+// Add error handling for socket connection
+socket.on('connect_error', (error) => {
+    console.warn("Socket connection error (non-critical):", error?.message);
+});
+
+socket.on('disconnect', (reason) => {
+    console.log("Socket disconnected:", reason);
+});
+
 let typingTimer;
 
 export default function Storefront() {

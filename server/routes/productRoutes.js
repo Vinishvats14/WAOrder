@@ -56,13 +56,17 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
     }
 });
 
-// 1. Delete Product
+// 1. Delete Product - WITH SELLER VERIFICATION
 router.delete('/:id', auth, async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ msg: "Product nahi mila" });
 
-        // Check karo ki wahi seller delete kar raha hai jiska product hai
+        // CRITICAL: Check if THIS seller owns THIS product
+        if (product.sellerId.toString() !== req.adminId) {
+            return res.status(403).json({ msg: "Unauthorized - Ye product aapka nahi hai!" });
+        }
+        
         await Product.findByIdAndDelete(req.params.id);
         res.json({ msg: "Maal saaf! Product deleted." });
     } catch (err) {
@@ -70,9 +74,17 @@ router.delete('/:id', auth, async (req, res) => {
     }
 });
 
-// 2. Update Product (Price ya Name badalne ke liye)
+// 2. Update Product (Price ya Name badalne ke liye) - WITH SELLER VERIFICATION
 router.patch('/:id', auth, async (req, res) => {
     try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ msg: "Product nahi mila" });
+        
+        // CRITICAL: Check if THIS seller owns THIS product
+        if (product.sellerId.toString() !== req.adminId) {
+            return res.status(403).json({ msg: "Unauthorized - Ye product aapka nahi hai!" });
+        }
+        
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
             { $set: req.body },
