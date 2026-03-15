@@ -85,7 +85,9 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         // Live Socket Connection
-        const socket = io("http://localhost:10000");
+        const socket = io("http://localhost:10000" || import.meta.env.VITE_API_URL, {
+            withCredentials: true,
+        });  ;
 
         socket.on("visitorCount", (count) => setLiveVisitors(count));
 

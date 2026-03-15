@@ -6,7 +6,9 @@ import { useCart } from '../context/CartContext';
 import { io } from "socket.io-client";
 
 // Socket setup
-const socket = io("http://localhost:10000");
+const socket = io("http://localhost:10000" || import.meta.env.VITE_API_URL, {
+    withCredentials: true,
+}) ;    
 let typingTimer;
 
 export default function Storefront() {
