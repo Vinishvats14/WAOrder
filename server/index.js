@@ -29,7 +29,8 @@ app.use(express.json());
 const io = new Server(server, {
     cors: {
         origin: ["https://wa-order.vercel.app", "http://localhost:5173"],
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
