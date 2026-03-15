@@ -45,15 +45,20 @@ export default function AdminDashboard() {
     // 3. Data Fetching Logic (Jo pehle se tha)
     useEffect(() => {
         const fetchOrders = async () => {
-            const res = await axiosInstance.get('/orders/seller/ID');
-            setOrders(res.data);
+            if (!sellerId) return;
+            try {
+                const res = await axiosInstance.get(`/orders/seller/${sellerId}`);
+                setOrders(res.data);
+            } catch (err) {
+                console.error("Orders fetch error:", err);
+            }
         };
         fetchOrders();
 
         // Polling: Har 30 second mein check karo naye orders ke liye
         const interval = setInterval(fetchOrders, 30000);
         return () => clearInterval(interval);
-    }, []);
+    }, [sellerId]);
 
     const sendBulkPromo = () => {
         if (!promoMsg) return alert("Bhai, message toh likho!");
