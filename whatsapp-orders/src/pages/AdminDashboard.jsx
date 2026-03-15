@@ -85,9 +85,16 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         // Live Socket Connection
-        const socket = io("http://localhost:10000" || import.meta.env.VITE_API_URL, {
+        // Live Socket Connection Logic
+        const socketURL = import.meta.env.VITE_SOCKET_URL || 
+                        (import.meta.env.MODE === 'development' 
+                        ? 'http://localhost:10000' 
+                        : 'https://wa-order-backend.onrender.com');
+
+        const socket = io(socketURL, {
             withCredentials: true,
-        });  ;
+            transports: ["websocket", "polling"]
+        });
 
         socket.on("visitorCount", (count) => setLiveVisitors(count));
 

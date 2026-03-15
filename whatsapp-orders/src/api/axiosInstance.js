@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:10000/api',
+    // Agar environment variable hai to wo lo, nahi to check karo: 
+    // Kya hum development mein hain? Agar haan to localhost, warna live URL.
+    baseURL: import.meta.env.VITE_API_URL || 
+             (import.meta.env.MODE === 'development' 
+              ? 'http://localhost:10000/api' 
+              : 'https://wa-order-backend.onrender.com/api'),
     withCredentials: true,
 });
 
