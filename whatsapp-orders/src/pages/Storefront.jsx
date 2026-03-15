@@ -11,18 +11,32 @@ const socketURL = import.meta.env.VITE_SOCKET_URL ||
                   ? 'http://localhost:10000' 
                   : 'https://wa-order-backend.onrender.com');
 
-const socket = io(socketURL, {
-    withCredentials: true,
-});
+let socketInstance = null;
 
-// Add error handling for socket connection
-socket.on('connect_error', (error) => {
-    console.warn("Socket connection error (non-critical):", error?.message);
-});
+try {
+    socketInstance = io(socketURL, {
+        withCredentials: true,
+        transports: ["websocket", "polling"],
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5
+    });
 
-socket.on('disconnect', (reason) => {
-    console.log("Socket disconnected:", reason);
-});
+    socketInstance.on('connect', () => {
+        console.log("✅ Socket connected to:", socketURL);
+    });
+
+    socketInstance.on('connect_error', (error) => {
+        console.warn("⚠️ Socket connection error (Storefront):", error?.message);
+    });
+
+    socketInstance.on('disconnect', (reason) => {
+        console.log("❌ Socket disconnected:", reason);
+    });
+} catch (err) {
+    console.error("Socket initialization failed:", err);
+}
 
 let typingTimer;
 
@@ -70,17 +84,19 @@ export default function Storefront() {
             const newCustomerData = { ...prev, [field]: value };
 
             // Real-time notification logic (Debounced)
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-                if (newCustomerData.name.length > 2 || newCustomerData.phone.length > 5) {
-                    socket.emit("cartActivity", {
-                        customerName: newCustomerData.name,
-                        customerPhone: newCustomerData.phone,
-                        items: cart,
-                        shop: shopName
-                    });
-                }
-            }, 1000);
+            if (socketInstance && socketInstance.connected) {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    if (newCustomerData.name.length > 2 || newCustomerData.phone.length > 5) {
+                        socketInstance.emit("cartActivity", {
+                            customerName: newCustomerData.name,
+                            customerPhone: newCustomerData.phone,
+                            items: cart,
+                            shop: shopName
+                        });
+                    }
+                }, 1000);
+            }
 
             return newCustomerData;
         });

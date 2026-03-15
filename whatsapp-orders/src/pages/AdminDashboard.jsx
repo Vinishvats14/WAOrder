@@ -89,49 +89,68 @@ export default function AdminDashboard() {
     }, [sellerId]);
 
     useEffect(() => {
-        // Live Socket Connection
-        // Live Socket Connection Logic
-        const socketURL = import.meta.env.VITE_SOCKET_URL || 
-                        (import.meta.env.MODE === 'development' 
-                        ? 'http://localhost:10000' 
-                        : 'https://wa-order-backend.onrender.com');
+        // Socket.IO Connection for live updates
+        try {
+            const socketURL = import.meta.env.VITE_SOCKET_URL || 
+                            (import.meta.env.MODE === 'development' 
+                            ? 'http://localhost:10000' 
+                            : 'https://wa-order-backend.onrender.com');
 
-        const socket = io(socketURL, {
-            withCredentials: true,
-            transports: ["websocket", "polling"]
-        });
-
-        socket.on("visitorCount", (count) => setLiveVisitors(count));
-
-        socket.on("adminNotification", (data) => {
-            setNotifications(prev => {
-                const existingIndex = prev.findIndex(item =>
-                    (data.customerPhone && item.phone === data.customerPhone)
-                );
-
-                if (existingIndex !== -1) {
-                    const updated = [...prev];
-                    updated[existingIndex] = {
-                        ...updated[existingIndex],
-                        customerName: data.customerName || updated[existingIndex].customerName,
-                        phone: data.customerPhone || updated[existingIndex].phone,
-                        items: data.items,
-                        time: new Date().toLocaleTimeString()
-                    };
-                    return updated;
-                } else {
-                    return [{
-                        id: Date.now(),
-                        customerName: data.customerName || "Naya Visitor",
-                        phone: data.customerPhone || "Typing...",
-                        items: data.items,
-                        time: new Date().toLocaleTimeString()
-                    }, ...prev].slice(0, 10);
-                }
+            const socket = io(socketURL, {
+                withCredentials: true,
+                transports: ["websocket", "polling"],
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                reconnectionAttempts: 5
             });
-        });
 
-        return () => socket.disconnect();
+            socket.on("connect", () => {
+                console.log("✅ Socket connected!");
+            });
+
+            socket.on("visitorCount", (count) => setLiveVisitors(count));
+
+            socket.on("adminNotification", (data) => {
+                setNotifications(prev => {
+                    const existingIndex = prev.findIndex(item =>
+                        (data.customerPhone && item.phone === data.customerPhone)
+                    );
+
+                    if (existingIndex !== -1) {
+                        const updated = [...prev];
+                        updated[existingIndex] = {
+                            ...updated[existingIndex],
+                            customerName: data.customerName || updated[existingIndex].customerName,
+                            phone: data.customerPhone || updated[existingIndex].phone,
+                            items: data.items,
+                            time: new Date().toLocaleTimeString()
+                        };
+                        return updated;
+                    } else {
+                        return [{
+                            id: Date.now(),
+                            customerName: data.customerName || "Naya Visitor",
+                            phone: data.customerPhone || "Typing...",
+                            items: data.items,
+                            time: new Date().toLocaleTimeString()
+                        }, ...prev].slice(0, 10);
+                    }
+                });
+            });
+
+            socket.on("connect_error", (error) => {
+                console.warn("⚠️ Socket connection error:", error?.message);
+            });
+
+            socket.on("disconnect", (reason) => {
+                console.log("❌ Socket disconnected:", reason);
+            });
+
+            return () => socket.disconnect();
+        } catch (err) {
+            console.error("Socket initialization error:", err);
+        }
     }, []);
 
     useEffect(() => {
