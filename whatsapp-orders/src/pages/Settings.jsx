@@ -13,12 +13,12 @@ export default function Settings() {
     const shareStore = () => {
         const storeName = localStorage.getItem('storeName');
         const storeLink = `${window.location.origin}/${storeName}`;
-        const text = encodeURIComponent(`👋 Hello! Hamari online dukan ab live hai. Direct WhatsApp par order karne ke liye yahan click karein: ${storeLink}`);
+        const text = encodeURIComponent(`👋 Hello! Our online store is now live. Click here to place orders directly via WhatsApp: ${storeLink}`);
         window.open(`https://wa.me/?text=${text}`, '_blank');
     };
 
     useEffect(() => {
-        // Purani settings load karo taaki inputs khali na dikhein
+        // Load existing settings so inputs are not empty
         const fetchSettings = async () => {
             try {
                 const res = await axiosInstance.get(`/auth/store-by-id/${userId}`);
@@ -45,7 +45,7 @@ export default function Settings() {
         try {
             await axiosInstance.patch(`/auth/settings/${userId}`, config);
 
-            // Slug format mein save karo (Spaces ko dash se badal do)
+            // Save in slug format (replace spaces with hyphens)
             const cleanSlug = config.storeName.trim().replace(/\s+/g, '-').toLowerCase();
             localStorage.setItem('storeName', cleanSlug);
 
@@ -86,7 +86,7 @@ export default function Settings() {
                     <div className="bg-white p-8 rounded-[2rem] border-2 border-gray-50 shadow-sm">
                         <h4 className="text-xl font-black uppercase italic text-gray-800 mb-4">Custom Order Message 💬</h4>
                         <textarea
-                            placeholder="Example: Thanks for ordering! Hum 30 mins mein aapka order pack kar denge. Tab tak chai pijiye! ☕"
+                            placeholder="Example: Thanks for your order! We'll have it packed in 30 mins. Enjoy your tea meanwhile! ☕"
                             className="w-full p-6 rounded-3xl bg-gray-50 border-2 border-gray-100 focus:border-blue-400 focus:bg-white outline-none font-bold italic transition-all"
                             rows="3"
                         />
@@ -163,7 +163,7 @@ export default function Settings() {
             <div className="mt-8 p-6 bg-blue-50 rounded-3xl border border-blue-100 flex items-center justify-between">
                 <div>
                     <p className="font-bold text-blue-800">Pro Tip! 💡</p>
-                    <p className="text-xs text-blue-600">Settings save karne ke baad "View Live Store" par click karke dekhein.</p>
+                    <p className="text-xs text-blue-600">After saving settings, click "View Live Store" to preview your storefront.</p>
                 </div>
                 <div className="text-3xl rotate-12">✨</div>
             </div>

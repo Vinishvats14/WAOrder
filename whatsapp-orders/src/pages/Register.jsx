@@ -12,7 +12,7 @@ export default function Register() {
         e.preventDefault();
         try {
             await axiosInstance.post('/auth/register', formData);
-            alert("Registration Success! Ab login karo.");
+            alert("Registration successful! Please log in now.");
             navigate('/login');
         } catch (err) {
             alert(err.response?.data?.msg || "Error registering");
@@ -22,7 +22,7 @@ export default function Register() {
     return (
         <div className="flex justify-center items-center min-h-[80vh] p-4">
             <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border border-gray-100">
-                <h2 className="text-3xl font-black mb-6 text-gray-800 italic">Apni Dukan Shuru Karein 🚀</h2>
+                <h2 className="text-3xl font-black mb-6 text-gray-800 italic">Start Your Store 🚀</h2>
                 <form onSubmit={handleRegister} className="space-y-4">
                     <input type="email" placeholder="Email Address" className="w-full p-3 border rounded-xl"
                         onChange={e => setFormData({...formData, email: e.target.value})} required />

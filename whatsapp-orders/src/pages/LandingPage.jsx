@@ -26,20 +26,20 @@ export default function LandingPage() {
                 <div className="text-center max-w-4xl mx-auto">
                     {/* Badge */}
                     <div className="inline-block mb-6 px-4 py-2 bg-green-50 border border-green-200 rounded-full">
-                        <span className="text-green-700 font-bold text-sm">✨ Already 500+ sellers using WA-ORDER</span>
+                        <span className="text-green-700 font-bold text-sm">✨ Already 500+ Sellers Using WA-ORDER</span>
                     </div>
 
                     {/* Main Headline */}
                     <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tighter mb-6">
-                        अपनी दुकान को WhatsApp पर
+                        Go Digital on WhatsApp
                         <span className="block text-transparent bg-gradient-to-r from-green-600 via-emerald-500 to-teal-500 bg-clip-text mt-2">
-                            डिजिटल बनाओ
+                            In Minutes
                         </span>
                     </h1>
 
                     {/* Subheading */}
                     <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-4 font-medium leading-relaxed">
-                        2 मिनट में अपना ऑनलाइन स्टोर बनाएं। WhatsApp से ऑर्डर लें, स्टॉक मैनेज करें, और तुरंत बिल भेजें।
+                        Create your online store in 2 minutes. Receive orders via WhatsApp, manage inventory, and send bills instantly.
                     </p>
 
                     {/* Stats */}
@@ -64,13 +64,13 @@ export default function LandingPage() {
                             to="/register" 
                             className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 md:px-10 py-4 md:py-5 rounded-full text-lg font-bold shadow-lg shadow-green-200 hover:shadow-xl hover:scale-105 transition-all active:scale-95"
                         >
-                            अभी शुरू करें 🚀
+                            Get Started Now 🚀
                         </Link>
                         <button 
                             onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
                             className="border-2 border-gray-300 text-gray-700 px-8 md:px-10 py-4 md:py-5 rounded-full text-lg font-bold hover:border-gray-400 transition-all hover:bg-gray-50"
                         >
-                            कैसे काम करता है?
+                            How It Works
                         </button>
                     </div>
                 </div>
@@ -82,7 +82,7 @@ export default function LandingPage() {
                         <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                             <div className="text-center">
                                 <div className="text-6xl mb-4">📱</div>
-                                <p className="text-gray-500 font-bold">अपना स्टोर यहाँ दिखेगा</p>
+                                <p className="text-gray-500 font-bold">Your Store Will Appear Here</p>
                             </div>
                         </div>
                     </div>
@@ -94,10 +94,10 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
-                            शक्तिशाली फीचर्स
+                            Powerful Features
                         </h2>
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                            छोटे दुकानदारों के लिए डिज़ाइन किए गए सभी उपकरण
+                            All the tools designed for small business owners
                         </p>
                     </div>
 
@@ -109,9 +109,9 @@ export default function LandingPage() {
                             onMouseLeave={() => setHoveredFeature(null)}
                         >
                             <div className="text-5xl mb-4">📦</div>
-                            <h3 className="text-xl font-black uppercase mb-3">स्मार्ट इन्वेंटरी</h3>
+                            <h3 className="text-xl font-black uppercase mb-3">Smart Inventory</h3>
                             <p className="text-gray-600 font-medium leading-relaxed mb-4">
-                                रीयल-टाइम स्टॉक ट्रैकिंग। जब माल खत्म होने वाला हो तो अलर्ट पाएं।
+                                Real-time stock tracking. Get alerts when products are running low.
                             </p>
                             <div className={`h-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full w-0 group-hover:w-full transition-all duration-500`}></div>
                         </div>
@@ -123,9 +123,9 @@ export default function LandingPage() {
                             onMouseLeave={() => setHoveredFeature(null)}
                         >
                             <div className="text-5xl mb-4">📄</div>
-                            <h3 className="text-xl font-black uppercase mb-3">इंस्टेंट बिल</h3>
+                            <h3 className="text-xl font-black uppercase mb-3">Instant Invoices</h3>
                             <p className="text-gray-600 font-medium leading-relaxed mb-4">
-                                एक क्लिक में प्रोफेशनल PDF इनवॉयस बनाएं और WhatsApp पर भेजें।
+                                Generate professional PDF invoices with one click and share via WhatsApp.
                             </p>
                             <div className={`h-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full w-0 group-hover:w-full transition-all duration-500`}></div>
                         </div>
@@ -137,9 +137,9 @@ export default function LandingPage() {
                             onMouseLeave={() => setHoveredFeature(null)}
                         >
                             <div className="text-5xl mb-4">📈</div>
-                            <h3 className="text-xl font-black uppercase mb-3">लाइव एनालिटिक्स</h3>
+                            <h3 className="text-xl font-black uppercase mb-3">Live Analytics</h3>
                             <p className="text-gray-600 font-medium leading-relaxed mb-4">
-                                देखें कौन सा आइटम सबसे ज्यादा बिक रहा है। डेटा-ड्रिवन निर्णय लें।
+                                See which items sell best. Make data-driven decisions with confidence.
                             </p>
                             <div className={`h-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full w-0 group-hover:w-full transition-all duration-500`}></div>
                         </div>
@@ -151,9 +151,9 @@ export default function LandingPage() {
                             onMouseLeave={() => setHoveredFeature(null)}
                         >
                             <div className="text-5xl mb-4">🎨</div>
-                            <h3 className="text-xl font-black uppercase mb-3">कस्टम स्टोर</h3>
+                            <h3 className="text-xl font-black uppercase mb-3">Custom Store</h3>
                             <p className="text-gray-600 font-medium leading-relaxed mb-4">
-                                अपनी ब्रांडिंग के साथ एक यूनिक स्टोर रंग और लोगो सेट करें।
+                                Create a unique store with your branding. Set colors and logo easily.
                             </p>
                             <div className={`h-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full w-0 group-hover:w-full transition-all duration-500`}></div>
                         </div>
@@ -165,9 +165,9 @@ export default function LandingPage() {
                             onMouseLeave={() => setHoveredFeature(null)}
                         >
                             <div className="text-5xl mb-4">🔐</div>
-                            <h3 className="text-xl font-black uppercase mb-3">पूरी तरह सुरक्षित</h3>
+                            <h3 className="text-xl font-black uppercase mb-3">Fully Secure</h3>
                             <p className="text-gray-600 font-medium leading-relaxed mb-4">
-                                आपके डेटा सुरक्षित रहता है। हम कभी शेयर नहीं करते।
+                                Your data is completely safe. We never share or sell your information.
                             </p>
                             <div className={`h-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full w-0 group-hover:w-full transition-all duration-500`}></div>
                         </div>
@@ -179,9 +179,9 @@ export default function LandingPage() {
                             onMouseLeave={() => setHoveredFeature(null)}
                         >
                             <div className="text-5xl mb-4">⚡</div>
-                            <h3 className="text-xl font-black uppercase mb-3">सुपर फास्ट</h3>
+                            <h3 className="text-xl font-black uppercase mb-3">Super Fast</h3>
                             <p className="text-gray-600 font-medium leading-relaxed mb-4">
-                                तेजी से लोड होता है। कोई विलंब नहीं, सिर्फ स्पीड।
+                                Lightning-fast performance. No delays, just pure speed and reliability.
                             </p>
                             <div className={`h-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full w-0 group-hover:w-full transition-all duration-500`}></div>
                         </div>
@@ -194,19 +194,19 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
-                            कैसे काम करता है?
+                            How It Works
                         </h2>
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                            सिर्फ 4 सरल स्टेप में अपना स्टोर चलाएं
+                            Get your store running in just 4 simple steps
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-4">
                         {[
-                            { step: 1, title: "साइन अप करें", desc: "30 सेकंड में अपना खाता बनाएं" },
-                            { step: 2, title: "अपने मालों को जोड़ें", desc: "फ़ोटो, कीमत, स्टॉक डालें" },
-                            { step: 3, title: "लिंक शेयर करें", desc: "अपने ग्राहकों को स्टोर लिंक भेजें" },
-                            { step: 4, title: "ऑर्डर लें", desc: "WhatsApp पर सीधे ऑर्डर आएंगे" }
+                            { step: 1, title: "Sign Up", desc: "Create your account in 30 seconds" },
+                            { step: 2, title: "Add Products", desc: "Upload photos, prices, and stock" },
+                            { step: 3, title: "Share Link", desc: "Send store link to your customers" },
+                            { step: 4, title: "Receive Orders", desc: "Orders come straight to WhatsApp" }
                         ].map((item, idx) => (
                             <div key={idx} className="relative">
                                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 text-center h-full">
@@ -227,32 +227,32 @@ export default function LandingPage() {
             <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
                 <div className="max-w-7xl mx-auto text-center">
                     <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
-                        सरल मूल्य निर्धारण
+                        Simple Pricing
                     </h2>
                     <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
-                        सभी फीचर्स हमेशा फ्री हैं। कोई हिडन चार्ज नहीं।
+                        All features are always free. No hidden charges ever.
                     </p>
 
                     <div className="max-w-2xl mx-auto">
                         <div className="bg-white border-2 border-green-600 rounded-3xl p-8 md:p-12 text-center">
                             <div className="text-6xl font-black text-green-600 mb-4">₹0</div>
-                            <h3 className="text-3xl font-black mb-4">प्रो प्लान</h3>
-                            <p className="text-gray-600 mb-8 font-medium">हमेशा और हमेशा के लिए फ्री</p>
+                            <h3 className="text-3xl font-black mb-4">Pro Plan</h3>
+                            <p className="text-gray-600 mb-8 font-medium">Always free, forever</p>
                             
                             <ul className="text-left space-y-3 mb-8 text-gray-700 font-medium border-t border-b border-gray-200 py-8">
-                                <li>✅ असीमित प्रोडक्ट्स</li>
-                                <li>✅ असीमित ऑर्डर्स</li>
-                                <li>✅ स्मार्ट इन्वेंटरी</li>
-                                <li>✅ लाइव एनालिटिक्स</li>
-                                <li>✅ कस्टम ब्रांडिंग</li>
-                                <li>✅ 24/7 सपोर्ट</li>
+                                <li>✅ Unlimited Products</li>
+                                <li>✅ Unlimited Orders</li>
+                                <li>✅ Smart Inventory</li>
+                                <li>✅ Live Analytics</li>
+                                <li>✅ Custom Branding</li>
+                                <li>✅ 24/7 Support</li>
                             </ul>
 
                             <Link 
                                 to="/register"
                                 className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-full font-bold text-lg hover:shadow-lg hover:scale-105 transition-all active:scale-95"
                             >
-                                अभी शुरू करें
+                                Get Started Now
                             </Link>
                         </div>
                     </div>
@@ -263,16 +263,16 @@ export default function LandingPage() {
             <section className="py-20 px-4 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white">
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
-                        अभी शुरू करने के लिए तैयार?
+                        Ready to Get Started?
                     </h2>
                     <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto opacity-90">
-                        500+ दुकानदार पहले से ही WA-ORDER का उपयोग कर रहे हैं। आप भी कर सकते हैं।
+                        500+ business owners are already using WA-ORDER. You can too.
                     </p>
                     <Link 
                         to="/register"
                         className="inline-block bg-white text-green-600 px-10 py-5 rounded-full text-xl font-black hover:bg-gray-50 hover:scale-105 transition-all active:scale-95 shadow-xl"
                     >
-                        अभी रजिस्टर करें 🚀
+                        Register Now 🚀
                     </Link>
                 </div>
             </section>
@@ -281,9 +281,9 @@ export default function LandingPage() {
             <footer className="bg-gray-900 text-white py-12 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <h3 className="text-2xl font-black italic mb-4">WA-ORDER</h3>
-                    <p className="text-gray-400 mb-8">WhatsApp पर अपने स्टोर को शक्तिशाली बनाएं।</p>
+                    <p className="text-gray-400 mb-8">Empower Your Store on WhatsApp.</p>
                     <div className="border-t border-gray-800 pt-8 text-gray-500 text-sm">
-                        <p>© 2024 WA-ORDER. सभी अधिकार सुरक्षित।</p>
+                        <p>© 2024 WA-ORDER. All rights reserved.</p>
                     </div>
                 </div>
             </footer>

@@ -126,7 +126,7 @@ export default function Storefront() {
 
             // Create WhatsApp Message
             const itemsList = cart.map(item => `- ${item.name} (x1)`).join('\n');
-            const message = `*Naya Order aagaya!* 🛍️\n\n*Store:* ${seller.storeName}\n*Customer:* ${customer.name}\n*Phone:* ${customer.phone}\n*Address:* ${customer.address}\n\n*Items:*\n${itemsList}\n\n*Total Amount:* ₹${totalAmount}\n\n_Sent via WA-Order_`;
+            const message = `*New Order Received!* 🛍️\n\n*Store:* ${seller.storeName}\n*Customer:* ${customer.name}\n*Phone:* ${customer.phone}\n*Address:* ${customer.address}\n\n*Items:*\n${itemsList}\n\n*Total Amount:* ₹${totalAmount}\n\n_Sent via WA-Order_`;
 
             // Redirect to Seller's WhatsApp
             const encodedMessage = encodeURIComponent(message);
