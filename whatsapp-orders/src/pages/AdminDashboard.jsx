@@ -14,6 +14,8 @@ export default function AdminDashboard() {
     const [liveVisitors, setLiveVisitors] = useState(0);
     const [notifications, setNotifications] = useState([]);
     const [promoMsg, setPromoMsg] = useState("");
+    const [selectedOrder, setSelectedOrder] = useState(null); // For modal
+    const [showOrderModal, setShowOrderModal] = useState(false); // Modal visibility
     const storeURL = `${window.location.origin}/${localStorage.getItem('storeName')}`;
     const prevOrdersLength = useRef(orders.length);
 
@@ -275,336 +277,589 @@ export default function AdminDashboard() {
     const lowStockProducts = products.filter(p => p.stock <= (p.minStock || 3));
 
     return (
-        <div className="p-4 md:p-8 max-w-7xl mx-auto bg-gray-50 min-h-screen">
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-10 bg-white p-4 rounded-[2rem] shadow-sm border border-gray-100">
-                <div className="flex gap-2 items-center">
-                    {/* 1. Orders Link */}
-                    <Link to="/admin" className="px-6 py-3 bg-gray-900 text-white rounded-2xl font-bold text-sm hover:bg-black transition">
-                        Orders & Stock 📦
-                    </Link>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
+            {/* === HEADER / NAVIGATION === */}
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-2 rounded-xl font-black text-lg">🚀</div>
+                        <h1 className="text-2xl font-black italic text-gray-900">Seller War-Room</h1>
+                    </div>
 
-                    {/* 2. LIVE STORE BUTTON - Only show if shopName exists */}
-                    {shopName ? (
-                        <a
-                            href={`/${shopName}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="px-6 py-3 bg-green-100 text-green-700 rounded-2xl font-bold text-sm hover:bg-green-200 transition flex items-center gap-2 border border-green-200"
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Link to="/admin" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-sm transition-all duration-300">
+                            Orders 📦
+                        </Link>
+                        <Link to="/admin/customers" className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold text-sm transition-all duration-300">
+                            All Customers 👥
+                        </Link>
+                        {shopName ? (
+                            <a
+                                href={`/${shopName}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold text-sm transition-all duration-300"
+                            >
+                                Live Store 🌐
+                            </a>
+                        ) : (
+                            <button disabled className="px-4 py-2 bg-gray-200 text-gray-400 rounded-lg font-bold text-sm cursor-not-allowed">
+                                Loading... ⏳
+                            </button>
+                        )}
+                        <Link to="/admin/settings" className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-sm transition-all duration-300">
+                            Settings ⚙️
+                        </Link>
+                        <button
+                            onClick={() => {
+                                localStorage.clear();
+                                window.location.href = '/login';
+                            }}
+                            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold text-sm transition-all duration-300"
                         >
-                            View Live Store 🌐
-                        </a>
-                    ) : (
-                        <button disabled className="px-6 py-3 bg-gray-200 text-gray-400 rounded-2xl font-bold text-sm cursor-not-allowed">
-                            Loading Store... ⏳
+                            Logout 🚪
                         </button>
-                    )}
-
-                    {/* 3. Settings Link */}
-                    <Link to="/admin/settings" className="px-6 py-3 bg-gray-100 text-gray-600 rounded-2xl font-bold text-sm hover:bg-gray-200 transition">
-                        Settings ⚙️
-                    </Link>
-                </div>
-
-                {/* 4. Logout Button */}
-                <button
-                    onClick={() => {
-                        localStorage.clear();
-                        window.location.href = '/login';
-                    }}
-                    className="px-6 py-3 text-red-500 font-bold italic hover:bg-red-50 rounded-2xl transition"
-                >
-                    Logout 🚪
-                </button>
-            </div>
-            <h1 className="text-4xl font-black mb-8 text-gray-800 italic uppercase">Seller War-Room 🚀</h1>
-            <div className="mt-10 bg-gradient-to-br from-green-500 to-emerald-700 p-8 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-green-100 border-4 border-white">
-                <div className="text-center md:text-left">
-                    <h2 className="text-3xl font-black italic uppercase leading-none mb-2">
-                        Dukan ka QR Code ⚡
-                    </h2>
-                    <p className="font-medium opacity-90 text-sm max-w-xs">
-                        Ise print karke shop pe lagao ya Instagram pe daalo. Scan karte hi dukan khulegi!
-                    </p>
-                    <button
-                        onClick={() => {
-                            const canvas = document.getElementById("store-qr");
-                            const pngUrl = canvas.toDataURL("image/png");
-                            let downloadLink = document.createElement("a");
-                            downloadLink.href = pngUrl;
-                            downloadLink.download = `${localStorage.getItem('storeName')}_QR.png`;
-                            downloadLink.click();
-                        }}
-                        className="mt-6 bg-white text-green-600 px-8 py-4 rounded-2xl font-black text-xs uppercase shadow-xl hover:scale-105 transition-transform active:scale-95"
-                    >
-                        Download QR Code 📥
-                    </button>
-                </div>
-
-                <div className="bg-white p-6 rounded-[2.5rem] shadow-2xl flex items-center justify-center">
-                    {/* Store URL automatically pick ho jayega */}
-                    <QRCodeCanvas
-                        id="store-qr"
-                        value={`${window.location.origin}/${localStorage.getItem('storeName')}`}
-                        size={160}
-                        level={"H"}
-                        includeMargin={true}
-                    />
-                </div>
-            </div>
-            <div className="mt-10 bg-white p-8 rounded-[3rem] shadow-xl border border-gray-100">
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="bg-orange-100 text-orange-600 p-4 rounded-2xl text-2xl">📢</div>
-                    <div>
-                        <h3 className="text-2xl font-black uppercase italic">Marketing Hub</h3>
-                        <p className="text-sm text-gray-500 font-medium">Apne purane customers ko naya offer bhejein!</p>
                     </div>
                 </div>
-
-                <textarea
-                    value={promoMsg}
-                    onChange={(e) => setPromoMsg(e.target.value)}
-                    placeholder="Example: Hello! Aaj hamare paas Fresh Pineapple Cake pe 20% OFF hai. Order karein yahan: [Link]"
-                    className="w-full p-6 rounded-[2rem] bg-gray-50 border-2 border-gray-100 focus:border-orange-400 focus:bg-white transition-all outline-none font-bold text-gray-700 mb-4"
-                    rows="3"
-                />
-
-                <button
-                    onClick={sendBulkPromo}
-                    className="w-full bg-orange-500 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-orange-100 hover:bg-orange-600 transition-all active:scale-95"
-                >
-                    SEND PROMO TO ALL CUSTOMERS ({[...new Set(orders.map(o => o.customerPhone))].length}) 🔥
-                </button>
-            </div>
-            <div className="mt-10 bg-blue-600 p-8 rounded-[3rem] text-white shadow-2xl flex flex-wrap items-center justify-between gap-6 border-4 border-blue-400">
-                <div className="flex-1">
-                    <h3 className="text-3xl font-black uppercase italic leading-none mb-2">Social Sharing 📱</h3>
-                    <p className="font-medium opacity-90 text-sm">Apni dukan ka link ek click mein WhatsApp Status par lagayein aur orders payein!</p>
-                </div>
-                <button
-                    onClick={shareStore}
-                    className="bg-white text-blue-600 px-10 py-5 rounded-2xl font-black text-lg uppercase shadow-xl hover:scale-105 transition-all active:scale-95"
-                >
-                    Share on WhatsApp 🚀
-                </button>
-            </div>
-            {/* Live Visitors Counter */}
-            <div className="flex items-center gap-2 mb-6 bg-green-100 w-fit px-4 py-2 rounded-full border border-green-200 shadow-sm animate-pulse">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-bold text-green-700">{liveVisitors} People browsing right now</span>
             </div>
 
-            {/* Analytics Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-6 rounded-3xl shadow-xl transform hover:scale-105 transition">
-                    <p className="text-xs opacity-80 uppercase tracking-wider font-bold">Total Kamayi</p>
-                    <h2 className="text-4xl font-black mt-2">₹{stats.totalSales}</h2>
-                </div>
-                <div className="bg-white p-6 rounded-3xl shadow-lg border-b-4 border-green-500">
-                    <p className="text-xs text-gray-500 uppercase font-bold">Total Orders</p>
-                    <h2 className="text-4xl font-black text-gray-800 mt-2">{stats.totalOrders}</h2>
-                </div>
-                <div className="bg-white p-6 rounded-3xl shadow-lg border-b-4 border-yellow-500">
-                    <p className="text-xs text-gray-500 uppercase font-bold">Pending Orders</p>
-                    <h2 className="text-4xl font-black text-gray-800 mt-2">{stats.pendingOrders}</h2>
-                </div>
-            </div>
-
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-xl mb-10 border border-gray-100">
-                <h3 className="text-xl font-black mb-6 italic text-gray-800 uppercase flex items-center gap-2">
-                    Sales Performance 📈 <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full not-italic">Last 7 Days</span>
-                </h3>
-                <div className="h-[300px]">
-                    {Object.keys(analytics).length > 0 ? (
-                        <SalesChart data={analytics} />
-                    ) : (
-                        <div className="flex items-center justify-center h-full text-gray-400 italic">
-                            Data ikatha ho raha hai... Thoda intezar karein! ⏳
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Add Product Form */}
-            <div className="bg-white p-6 rounded-3xl shadow-xl mb-10 border border-blue-100">
-                <h3 className="text-xl font-black mb-4 italic text-blue-600 uppercase">Naya Maal Add Karein 📦</h3>
-                <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <input name="p_name" placeholder="Product Name" className="p-3 border rounded-xl" required />
-                    <input name="p_price" type="number" placeholder="Price (₹)" className="p-3 border rounded-xl" required />
-                    {/* 1. CURRENT STOCK INPUT */}
-                    <div className="flex flex-col">
-                        <label className="text-[10px] font-black text-gray-400 uppercase mb-1 ml-2">Total Stock</label>
-                        <input
-                            name="stock"
-                            type="number"
-                            placeholder="e.g. 50"
-                            min="1"
-                            step="1"
-                            className="p-4 border-2 border-gray-50 rounded-2xl bg-gray-50 font-bold focus:border-blue-400 focus:bg-white transition-all outline-none"
-                            required
-                        />
-                    </div>
-
-                    {/* 2. MINIMUM ALERT INPUT */}
-                    <div className="flex flex-col">
-                        <label className="text-[10px] font-black text-red-400 uppercase mb-1 ml-2">Alert at (Min)</label>
-                        <input
-                            name="minStock"
-                            type="number"
-                            placeholder="e.g. 5"
-                            min="1"
-                            step="1"
-                            className="p-4 border-2 border-gray-50 rounded-2xl bg-gray-50 font-bold focus:border-red-200 focus:bg-white transition-all outline-none"
-                            required
-                        />
-                    </div>
-
-                    <input name="p_desc" placeholder="Short Description" className="p-3 border rounded-xl" />
-                    <input name="p_image" type="file" className="p-2 text-xs" required />
-                    <button type="submit" className="lg:col-span-4 bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-black transition">
-                        Upload to My Store 🔥
-                    </button>
-                </form>
-            </div>
-            {lowStockProducts.length > 0 && (
-                <div className="mb-10 animate-pulse">
-                    <div className="bg-red-50 border-2 border-red-200 p-6 rounded-[2rem] flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-red-500 text-white p-3 rounded-2xl text-2xl shadow-lg shadow-red-200">
-                                ⚠️
-                            </div>
+            {/* === MAIN CONTENT === */}
+            <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+                {/* === TOP STATS CARDS === */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Total Revenue Card */}
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-100/50 p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                        <div className="flex items-start justify-between mb-4">
                             <div>
-                                <h3 className="text-lg font-black text-red-800 uppercase italic">Maal Khatam Hone Wala Hai!</h3>
-                                <p className="text-sm text-red-600 font-medium italic">Niche diye gaye items jaldi refill karein...</p>
+                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Total Revenue</p>
+                                <h2 className="text-4xl font-black text-gray-900 mt-2">₹{stats.totalSales}</h2>
+                            </div>
+                            <div className="bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 p-3 rounded-xl text-2xl">💰</div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-green-600 font-bold">
+                            <span>📈</span> All time earnings
+                        </div>
+                    </div>
+
+                    {/* Total Orders Card */}
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-100/50 p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                        <div className="flex items-start justify-between mb-4">
+                            <div>
+                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Total Orders</p>
+                                <h2 className="text-4xl font-black text-gray-900 mt-2">{stats.totalOrders}</h2>
+                            </div>
+                            <div className="bg-gradient-to-br from-green-100 to-emerald-50 text-green-600 p-3 rounded-xl text-2xl">📦</div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-blue-600 font-bold">
+                            <span>✅</span> Total completed orders
+                        </div>
+                    </div>
+
+                    {/* Pending Orders Card */}
+                    <div className="bg-white rounded-2xl shadow-lg border border-gray-100/50 p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                        <div className="flex items-start justify-between mb-4">
+                            <div>
+                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Pending</p>
+                                <h2 className="text-4xl font-black text-yellow-600 mt-2">{stats.pendingOrders}</h2>
+                            </div>
+                            <div className="bg-gradient-to-br from-yellow-100 to-orange-50 text-yellow-600 p-3 rounded-xl text-2xl">⏳</div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-orange-600 font-bold">
+                            <span>⚡</span> Awaiting your action
+                        </div>
+                    </div>
+                </div>
+
+                {/* === LIVE ACTIVITY BADGE === */}
+                <div className="mb-8 flex items-center gap-3 bg-white rounded-full border border-emerald-200 shadow-md px-6 py-3 w-fit">
+                    <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-bold text-emerald-700">{liveVisitors} people browsing your store right now</span>
+                </div>
+
+                {/* === SALES CHART SECTION === */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100/50 p-8 mb-8">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
+                                📈 Sales Performance
+                                <span className="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-black not-italic">Last 7 Days</span>
+                            </h3>
+                        </div>
+                        <button onClick={fetchSellerData} className="text-blue-600 font-bold hover:text-blue-700 text-sm underline-offset-4 hover:underline">
+                            Refresh
+                        </button>
+                    </div>
+                    <div className="h-[300px]">
+                        {Object.keys(analytics).length > 0 ? (
+                            <SalesChart data={analytics} />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-gray-400 italic">
+                                📊 Data ikatha ho raha hai... Thoda intezar karein!
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* === QR CODE & PROMO SECTION === */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* QR Code Section */}
+                    <div className="bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 rounded-2xl shadow-xl p-8 text-white">
+                        <h3 className="text-2xl font-black mb-2 flex items-center gap-2">⚡ Store QR Code</h3>
+                        <p className="text-sm opacity-90 mb-6">Print or share to get instant orders!</p>
+                        
+                        <div className="bg-white p-4 rounded-xl mb-6 flex items-center justify-center">
+                            <QRCodeCanvas
+                                id="store-qr"
+                                value={`${window.location.origin}/${localStorage.getItem('storeName')}`}
+                                size={140}
+                                level={"H"}
+                                includeMargin={true}
+                            />
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                const canvas = document.getElementById("store-qr");
+                                const pngUrl = canvas.toDataURL("image/png");
+                                let downloadLink = document.createElement("a");
+                                downloadLink.href = pngUrl;
+                                downloadLink.download = `${localStorage.getItem('storeName')}_QR.png`;
+                                downloadLink.click();
+                            }}
+                            className="w-full bg-white text-emerald-600 px-6 py-3 rounded-xl font-black text-sm shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
+                        >
+                            📥 Download QR Code
+                        </button>
+                    </div>
+
+                    {/* Social Sharing Section */}
+                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-8 text-white">
+                        <h3 className="text-2xl font-black mb-2 flex items-center gap-2">📱 Share on Social</h3>
+                        <p className="text-sm opacity-90 mb-6">Get your store viral on WhatsApp & Instagram!</p>
+                        
+                        <div className="space-y-3 mb-6">
+                            <div className="flex items-center gap-3 text-sm">
+                                <span>✨</span> One click sharing
+                            </div>
+                            <div className="flex items-center gap-3 text-sm">
+                                <span>🎯</span> Reach your audience instantly
+                            </div>
+                            <div className="flex items-center gap-3 text-sm">
+                                <span>📈</span> Boost your sales
                             </div>
                         </div>
 
-                        <div className="flex gap-3">
-                            {lowStockProducts.map(p => (
-                                <span key={p._id} className="bg-white px-4 py-2 rounded-xl text-xs font-black text-red-600 border border-red-100 shadow-sm">
-                                    {p.name} ({p.stock} left)
-                                </span>
-                            ))}
+                        <button
+                            onClick={shareStore}
+                            className="w-full bg-white text-blue-600 px-6 py-3 rounded-xl font-black text-sm shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                        >
+                            🚀 Share Store Now
+                        </button>
+                    </div>
+                </div>
+
+                {/* === MARKETING HUB === */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100/50 p-8 mb-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="bg-orange-100 text-orange-600 p-3 rounded-xl text-2xl">📢</div>
+                        <div>
+                            <h3 className="text-xl font-black text-gray-900">Marketing Hub</h3>
+                            <p className="text-sm text-gray-500">Send bulk promotions to your customers</p>
+                        </div>
+                    </div>
+
+                    <textarea
+                        value={promoMsg}
+                        onChange={(e) => setPromoMsg(e.target.value)}
+                        placeholder="Example: 🎉 TODAY'S SPECIAL! Fresh Pineapple Cake with 20% OFF! Limited stock available..."
+                        className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-100 focus:border-orange-400 focus:bg-white transition-all outline-none font-semibold text-gray-700 mb-4 textarea-custom resize-none"
+                        rows="3"
+                    />
+
+                    <button
+                        onClick={sendBulkPromo}
+                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 rounded-xl font-black text-sm shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95"
+                    >
+                        🔥 Send to {[...new Set(orders.map(o => o.customerPhone))].length} Customers
+                    </button>
+                </div>
+
+                {/* === ADD NEW PRODUCT FORM === */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100/50 p-8 mb-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="bg-blue-100 text-blue-600 p-3 rounded-xl text-2xl">📦</div>
+                        <div>
+                            <h3 className="text-xl font-black text-gray-900">Add New Product</h3>
+                            <p className="text-sm text-gray-500">Expand your inventory instantly</p>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <input 
+                            name="p_name" 
+                            placeholder="Product Name" 
+                            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-blue-50 transition-all outline-none font-semibold" 
+                            required 
+                        />
+                        <input 
+                            name="p_price" 
+                            type="number" 
+                            placeholder="Price (₹)" 
+                            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-blue-50 transition-all outline-none font-semibold" 
+                            required 
+                        />
+                        <div className="flex flex-col">
+                            <label className="text-[10px] font-black text-gray-500 uppercase mb-1 ml-1">Total Stock</label>
+                            <input
+                                name="stock"
+                                type="number"
+                                placeholder="e.g. 50"
+                                min="1"
+                                step="1"
+                                className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-blue-50 transition-all outline-none font-semibold"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-[10px] font-black text-red-500 uppercase mb-1 ml-1">Alert Level (Min)</label>
+                            <input
+                                name="minStock"
+                                type="number"
+                                placeholder="e.g. 5"
+                                min="1"
+                                step="1"
+                                className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-400 focus:bg-red-50 transition-all outline-none font-semibold"
+                                required
+                            />
+                        </div>
+
+                        <input 
+                            name="p_desc" 
+                            placeholder="Short Description" 
+                            className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-blue-50 transition-all outline-none font-semibold" 
+                        />
+                        <label className="px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-blue-400 transition-all cursor-pointer font-semibold text-gray-600 flex items-center justify-center gap-2 bg-gray-50">
+                            <span>🖼️</span> Upload Image
+                            <input name="p_image" type="file" className="hidden" required />
+                        </label>
+                        <button type="submit" className="lg:col-span-2 bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white py-3 rounded-xl font-black text-sm shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95">
+                            ✅ Upload to Store
+                        </button>
+                    </form>
+                </div>
+
+                {/* === LOW STOCK WARNING === */}
+                {lowStockProducts.length > 0 && (
+                    <div className="mb-8 p-6 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border-l-4 border-red-500 shadow-md animate-pulse">
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <div className="bg-red-500 text-white p-3 rounded-xl text-2xl shadow-lg">⚠️</div>
+                            <div className="flex-1">
+                                <h3 className="font-black text-red-700 uppercase text-sm">Low Stock Alert!</h3>
+                                <p className="text-red-600 text-xs font-semibold">These items are running low. Restock ASAP:</p>
+                            </div>
+                            <div className="flex gap-2 flex-wrap">
+                                {lowStockProducts.map(p => (
+                                    <span key={p._id} className="bg-white px-3 py-1 rounded-lg text-xs font-black text-red-600 border border-red-200 shadow-sm">
+                                        {p.name} ({p.stock} left)
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* === INVENTORY GRID === */}
+                <div className="mb-8">
+                    <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">📊 Your Inventory</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {products.length === 0 ? (
+                            <div className="col-span-full py-12 text-center">
+                                <p className="text-gray-400 text-lg font-semibold">No products yet. Add your first item above! 🚀</p>
+                            </div>
+                        ) : (
+                            products.map(p => (
+                                <div key={p._id} className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100/50 hover:shadow-xl hover:border-gray-200 transition-all duration-300 group">
+                                    <div className="relative overflow-hidden bg-gray-100 h-40">
+                                        <img src={p.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt={p.name} />
+                                        <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-[10px] font-black text-white uppercase ${p.stock <= (p.minStock || 3) ? 'bg-red-500' : 'bg-green-500'}`}>
+                                            {p.stock} Units
+                                        </div>
+                                    </div>
+
+                                    <div className="p-4">
+                                        <h4 className="font-bold text-gray-900 text-sm line-clamp-2 mb-1">{p.name}</h4>
+                                        <p className="text-green-600 font-black text-lg mb-4">₹{p.price}</p>
+
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => editPrice(p._id, p.price)}
+                                                className="flex-1 py-2 bg-blue-50 hover:bg-blue-500 text-blue-600 hover:text-white rounded-lg font-bold text-xs transition-all duration-300 flex items-center justify-center gap-1"
+                                            >
+                                                ✏️ Edit
+                                            </button>
+                                            <button
+                                                onClick={() => deleteProduct(p._id)}
+                                                className="flex-1 py-2 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white rounded-lg font-bold text-xs transition-all duration-300 flex items-center justify-center gap-1"
+                                            >
+                                                🗑️ Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* === HOT LEADS SECTION === */}
+                <div className="mb-8">
+                    <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
+                        🔥 Live Customer Interest
+                        <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {notifications.length === 0 ? (
+                            <div className="col-span-full py-12 text-center">
+                                <p className="text-gray-400 text-lg">📡 No live activity yet. Customers will appear here!</p>
+                            </div>
+                        ) : (
+                            notifications.map(lead => (
+                                <div key={lead.id} className="bg-white rounded-2xl shadow-md border-l-4 border-orange-500 p-5 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <p className="font-black text-gray-900">{lead.customerName || "Anonymous Visitor"}</p>
+                                            <p className="text-xs text-blue-600 font-bold mt-1">📞 {lead.phone || "Browsing..."}</p>
+                                        </div>
+                                        <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-1 rounded-full font-black animate-pulse">LIVE</span>
+                                    </div>
+
+                                    <div className="bg-gray-50 p-3 rounded-lg mb-4">
+                                        <p className="text-[10px] text-gray-500 uppercase font-bold mb-2">Items in cart:</p>
+                                        <p className="text-xs text-gray-700 font-semibold">{lead.items?.map(i => i.name).join(', ') || "Just browsing..."}</p>
+                                    </div>
+
+                                    {lead.phone && (
+                                        <button 
+                                            onClick={() => window.open(`https://wa.me/${lead.phone}?text=Hi ${lead.customerName}, main dekh raha hoon aap hamare store par kuch items check kar rahe hain...`)}
+                                            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-black text-xs transition-all duration-300 active:scale-95"
+                                        >
+                                            💬 Message Now
+                                        </button>
+                                    )}
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* === ORDERS MANAGEMENT === */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">📦 Order Management</h2>
+                    <OrderTable orders={orders} refreshOrders={fetchOrders} />
+                </div>
+
+                {/* === RECENT TRANSACTIONS TABLE === */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden">
+                    <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-transparent flex justify-between items-center">
+                        <h3 className="text-lg font-black text-gray-900">📊 Recent Transactions</h3>
+                        <button onClick={fetchSellerData} className="text-blue-600 font-bold hover:text-blue-700 text-sm underline-offset-4 hover:underline">
+                            ♻️ Refresh
+                        </button>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead className="bg-gray-100 text-gray-700 font-black uppercase text-xs tracking-wider">
+                                <tr>
+                                    <th className="p-4 text-left">Customer</th>
+                                    <th className="p-4 text-left">Items</th>
+                                    <th className="p-4 text-right">Amount</th>
+                                    <th className="p-4 text-center">Status</th>
+                                    <th className="p-4 text-center">Update</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {orders.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="p-8 text-center text-gray-400">
+                                            No orders yet. Your first customer is coming soon! 🚀
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    orders.map(order => (
+                                        <tr 
+                                            key={order._id} 
+                                            onClick={() => {
+                                                setSelectedOrder(order);
+                                                setShowOrderModal(true);
+                                            }}
+                                            className="hover:bg-blue-50/50 transition-all duration-300 cursor-pointer"
+                                        >
+                                            <td className="p-4 font-bold text-gray-900">{order.customerName}</td>
+                                            <td className="p-4 text-gray-600 text-xs">{order.items.map(i => i.name).join(', ')}</td>
+                                            <td className="p-4 font-black text-gray-900 text-right">₹{order.total}</td>
+                                            <td className="p-4 text-center">
+                                                <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                                                    order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 
+                                                    order.status === 'Confirmed' ? 'bg-blue-100 text-blue-700' :
+                                                    order.status === 'Shipped' ? 'bg-purple-100 text-purple-700' :
+                                                    'bg-green-100 text-green-700'
+                                                }`}>
+                                                    {order.status}
+                                                </span>
+                                            </td>
+                                            <td className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
+                                                <select 
+                                                    onChange={(e) => updateStatus(order._id, e.target.value)} 
+                                                    className="border-2 border-gray-200 rounded-lg p-1 bg-white font-semibold text-xs outline-none hover:border-blue-400 transition-all" 
+                                                    value={order.status}
+                                                >
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Confirmed">Confirm</option>
+                                                    <option value="Shipped">Ship</option>
+                                                    <option value="Delivered">Deliver</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {/* === ORDER DETAILS MODAL === */}
+            {showOrderModal && selectedOrder && (
+                <div 
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                    onClick={() => setShowOrderModal(false)}
+                >
+                    <div 
+                        className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div className="sticky top-0 bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-6 flex justify-between items-center">
+                            <h2 className="text-2xl font-black">Order Details</h2>
+                            <button 
+                                onClick={() => setShowOrderModal(false)}
+                                className="text-white hover:bg-white/20 p-2 rounded-full transition-all"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="p-6 md:p-8 space-y-6">
+                            {/* Customer Info */}
+                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-5">
+                                <h3 className="font-black text-blue-900 mb-4 flex items-center gap-2">
+                                    👤 Customer Information
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-xs text-blue-600 font-bold uppercase">Name</p>
+                                        <p className="text-lg font-black text-blue-900">{selectedOrder.customerName}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-blue-600 font-bold uppercase">Phone</p>
+                                        <a 
+                                            href={`https://wa.me/${selectedOrder.customerPhone}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-lg font-black text-green-600 hover:underline"
+                                        >
+                                            {selectedOrder.customerPhone}
+                                        </a>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <p className="text-xs text-blue-600 font-bold uppercase">Address</p>
+                                        <p className="text-sm font-semibold text-blue-900">{selectedOrder.address}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Items */}
+                            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-2xl p-5">
+                                <h3 className="font-black text-purple-900 mb-4 flex items-center gap-2">
+                                    📦 Items Ordered
+                                </h3>
+                                <div className="space-y-3">
+                                    {selectedOrder.items.map((item, idx) => (
+                                        <div key={idx} className="flex justify-between items-center bg-white rounded-lg p-3">
+                                            <div>
+                                                <p className="font-black text-purple-900">{item.name}</p>
+                                                <p className="text-xs text-gray-500">Qty: {item.quantity || 1}</p>
+                                            </div>
+                                            <p className="font-black text-purple-600">₹{item.price}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Order Summary */}
+                            <div className="bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 rounded-2xl p-5">
+                                <div className="flex justify-between items-center mb-4">
+                                    <p className="font-bold text-gray-700">Subtotal:</p>
+                                    <p className="font-black text-gray-900">₹{selectedOrder.total * 0.9}</p>
+                                </div>
+                                <div className="flex justify-between items-center mb-4">
+                                    <p className="font-bold text-gray-700">Tax (10%):</p>
+                                    <p className="font-black text-gray-900">₹{Math.round(selectedOrder.total * 0.1)}</p>
+                                </div>
+                                <div className="border-t-2 border-gray-300 pt-4 flex justify-between items-center">
+                                    <p className="font-black text-gray-900">Total Amount:</p>
+                                    <p className="text-3xl font-black text-green-600">₹{selectedOrder.total}</p>
+                                </div>
+                            </div>
+
+                            {/* Order Status */}
+                            <div>
+                                <p className="text-xs text-gray-600 font-bold uppercase mb-3">Current Status</p>
+                                <div className="flex gap-2">
+                                    {['Pending', 'Confirmed', 'Shipped', 'Delivered'].map(status => (
+                                        <button
+                                            key={status}
+                                            onClick={() => updateStatus(selectedOrder._id, status)}
+                                            className={`flex-1 py-3 px-4 rounded-lg font-black text-sm transition-all duration-300 ${
+                                                selectedOrder.status === status
+                                                    ? 'bg-green-600 text-white scale-105'
+                                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                            }`}
+                                        >
+                                            {status}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-3">
+                                <a 
+                                    href={`https://wa.me/${selectedOrder.customerPhone}?text=Hi ${selectedOrder.customerName}, Your order status has been updated to ${selectedOrder.status}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-black transition-all duration-300 flex items-center justify-center gap-2"
+                                >
+                                    💬 Message Customer
+                                </a>
+                                <button 
+                                    onClick={() => setShowOrderModal(false)}
+                                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-3 rounded-lg font-black transition-all duration-300"
+                                >
+                                    Close
+                                </button>
+                            </div>
+
+                            {/* Order Metadata */}
+                            <div className="border-t pt-4 text-xs text-gray-500">
+                                <p>Order ID: {selectedOrder._id}</p>
+                                <p>Placed on: {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             )}
-            <h3 className="text-2xl font-black mb-6 italic text-gray-800 uppercase">Mera Stock (Manage) 🛒</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                {products.map(p => (
-                    <div key={p._id} className="bg-white p-4 rounded-3xl shadow-md border border-gray-100 group relative">
-                        <img src={p.image} className="w-full h-40 object-cover rounded-2xl mb-3" alt="" />
-
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h4 className="font-bold text-gray-800">{p.name}</h4>
-                                <p className="text-green-600 font-black">₹{p.price}</p>
-                            </div>
-                            {/* --- AB YE STOCK COUNTER YAHAN PASTE KARO --- */}
-                            <div className="flex justify-between items-center mt-3 bg-gray-50 p-2 rounded-xl border border-gray-100">
-                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">In Stock</span>
-                                <span className={`text-xs font-black ${p.stock <= (p.minStock || 3) ? 'text-red-500' : 'text-gray-800'}`}>
-                                    {p.stock} Units
-                                </span>
-                            </div>
-                            {/* Action Buttons */}
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => editPrice(p._id, p.price)}
-                                    className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
-                                >
-                                    ✏️
-                                </button>
-                                <button
-                                    onClick={() => deleteProduct(p._id)}
-                                    className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition"
-                                >
-                                    🗑️
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Hot Leads Section */}
-            <div className="mt-10 mb-10">
-                <div className="flex items-center gap-2 mb-6">
-                    <h3 className="text-2xl font-black text-gray-800 italic">Hot Leads (Live Interest) 🔥</h3>
-                    <span className="bg-orange-500 w-3 h-3 rounded-full animate-ping"></span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {notifications.length === 0 ? <p className="text-gray-400 italic">No live activity...</p> :
-                        notifications.map(lead => (
-                            <div key={lead.id} className="bg-white p-5 rounded-3xl shadow-xl border-t-4 border-orange-500 transform hover:-translate-y-1 transition duration-300">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <p className="font-black text-lg text-gray-800">{lead.customerName || "Anonymous Visitor"}</p>
-                                        <p className="text-xs text-blue-600 font-bold tracking-tighter">{lead.phone || "No Number Yet"}</p>
-                                    </div>
-                                    <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-1 rounded-full font-black animate-pulse uppercase tracking-widest">Live</span>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded-2xl mb-4">
-                                    <p className="text-[10px] text-gray-400 uppercase font-bold mb-1">Items in Cart:</p>
-                                    <p className="text-xs text-gray-600 italic">{lead.items?.map(i => i.name).join(', ') || "Browsing..."}</p>
-                                </div>
-                                {lead.phone && (
-                                    <button onClick={() => window.open(`https://wa.me/${lead.phone}?text=Hi ${lead.customerName}, main dekh raha hoon aap hamare store par kuch items check kar rahe hain...`)}
-                                        className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-lg transition">
-                                        Chat to Convince 💬
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                </div>
-            </div>
-            {/* // Orders Management Section */}
-            <div className="mt-12">
-                <h2 className="text-2xl font-black mb-6 italic uppercase text-gray-800">Order Management 📦</h2>
-                <OrderTable orders={orders} refreshOrders={fetchOrders} />
-            </div>
-
-            {/* Recent Orders Table */}
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-                <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                    <h3 className="text-xl font-bold text-gray-800">Recent Transactions</h3>
-                    <button onClick={fetchSellerData} className="text-blue-600 font-bold hover:underline underline-offset-4 text-sm">Refresh Live Data</button>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-gray-100 text-gray-500 text-xs uppercase tracking-widest">
-                            <tr>
-                                <th className="p-4">Customer</th>
-                                <th className="p-4">Items</th>
-                                <th className="p-4">Amount</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {orders.map(order => (
-                                <tr key={order._id} className="hover:bg-blue-50/30 transition">
-                                    <td className="p-4 font-bold text-gray-800">{order.customerName}</td>
-                                    <td className="p-4 text-xs text-gray-600 font-medium">{order.items.map(i => i.name).join(', ')}</td>
-                                    <td className="p-4 font-black text-gray-800 text-lg">₹{order.total}</td>
-                                    <td className="p-4">
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-                                            {order.status}
-                                        </span>
-                                    </td>
-                                    <td className="p-4 text-xs">
-                                        <select onChange={(e) => updateStatus(order._id, e.target.value)} className="border rounded-lg p-1 bg-white shadow-sm outline-none" value={order.status}>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Confirmed">Confirm</option>
-                                            <option value="Shipped">Ship</option>
-                                            <option value="Delivered">Deliver</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     );
 }
