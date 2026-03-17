@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import Storefront from './pages/Storefront';
 import AdminDashboard from './pages/AdminDashboard';
 import Settings from './pages/Settings';
-import Customers from './pages/Customers';
+import Inventory from './pages/Inventory';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { CartProvider } from './context/CartContext';
@@ -47,7 +47,8 @@ function App() {
 
                         {/* Admin Routes */}
                         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-                        <Route path="/admin/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
+                        <Route path="/admin/customers" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+                        <Route path="/admin/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
                         <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                     </Routes>
                 </div>

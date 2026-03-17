@@ -71,7 +71,7 @@ export default function Storefront() {
 
                 setLoading(false);
             } catch (err) {
-                console.error("Dukan load nahi ho payi!", err);
+                console.error("Error fetching store data!", err);
                 setError(`Error: ${err.response?.data?.msg || err.message}`);
                 setLoading(false);
             }
@@ -104,7 +104,7 @@ export default function Storefront() {
 
     const handleOrder = async () => {
         if (!customer.name || !customer.address || !customer.phone) {
-            return alert("Bhai, saari details bharna zaroori hai!");
+            return alert("Filling all details is necessary!");
         }
 
         if (!seller || !seller.whatsappNumber) {
@@ -143,14 +143,14 @@ export default function Storefront() {
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="animate-bounce text-2xl font-black italic text-green-600">DUKAN KHUL RAHI HAI... 🚀</div>
+            <div className="animate-bounce text-2xl font-black italic text-green-600">Shop is loading... 🚀</div>
         </div>
     );
 
     if (error) return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center p-8 bg-white rounded-3xl shadow-xl max-w-md">
-                <h1 className="text-3xl mb-4">⚠️ Dukan Load Error</h1>
+                <h1 className="text-3xl mb-4">⚠️ Shop Load Error</h1>
                 <p className="text-lg font-bold text-gray-800 mb-4">{error}</p>
                 <p className="text-sm text-gray-600 mb-6">Debug Info: Shop Name = <strong>{shopName}</strong></p>
                 <button onClick={() => window.location.href = '/'} className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-xl font-bold">Wapas Home</button>
@@ -162,7 +162,7 @@ export default function Storefront() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center p-8 bg-white rounded-3xl shadow-xl">
                 <h1 className="text-6xl mb-4">404</h1>
-                <p className="text-xl font-bold text-gray-800">Bhai, ye dukan humein nahi mili! ⛔</p>
+                <p className="text-xl font-bold text-gray-800">Unable to find shop ⛔</p>
                 <p className="text-sm text-gray-600 mt-2">Shop Name: <strong>{shopName}</strong></p>
                 <button onClick={() => window.location.href = '/'} className="mt-4 text-blue-600 font-bold underline">Wapas ghar chalein?</button>
             </div>
@@ -186,7 +186,7 @@ export default function Storefront() {
                             products.map(p => <ProductCard key={p._id} product={p} />)
                         ) : (
                             <div className="col-span-full p-20 bg-white rounded-3xl border-2 border-dashed border-gray-200 text-center">
-                                <p className="text-gray-400 italic font-bold">Abhi is store mein koi maal nahi hai...</p>
+                                <p className="text-gray-400 italic font-bold">Currently no products available...</p>
                             </div>
                         )}
                     </div>
@@ -204,7 +204,7 @@ export default function Storefront() {
 
                         {cart.length === 0 ? (
                             <div className="py-10 text-center">
-                                <p className="text-gray-400 font-bold italic">Cart khali hai, kuch add karein!</p>
+                                <p className="text-gray-400 font-bold italic">Cart is empty, add some items!</p>
                             </div>
                         ) : (
                             <>
